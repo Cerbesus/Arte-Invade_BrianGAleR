@@ -45,6 +45,7 @@ public class SimpleCollectibleScript : MonoBehaviour {
 			Instantiate(collectEffect, transform.position, Quaternion.identity);
 
 		//Below is space to add in your code for what happens based on the collectible type
+		gameObject.GetComponent<Material>().color = Color.red;
 
 		if (CollectibleType == CollectibleTypes.NoType) {
 
