@@ -46,8 +46,8 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.24
-  m_Speed: 3.5
-  m_Acceleration: 8
+  m_Speed: 2
+  m_Acceleration: 5
   avoidancePriority: 50
   m_AngularSpeed: 120
   m_StoppingDistance: 0
@@ -87,7 +87,7 @@ MonoBehaviour:
   minGrowCoef: 4.5
   maxGrowCoef: 6.5
   newLegCooldown: 0.3
-  velocity: {x: 0.2779982, y: 0, z: -0.30365953}
+  velocity: {x: 0.73047704, y: 0, z: 0.6008278}
 --- !u!114 &2190705791347812058
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -115,11 +115,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1ff83357198378c45bea5673f075b260, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  min: {x: -2, y: 0, z: -2}
-  max: {x: 2, y: 0, z: 2}
-  playerDistanceDetection: 0.3
-  visionAngle: 60
-  playerAttackDistance: 0.1
+  min: {x: -30, y: 0, z: -30}
+  max: {x: 30, y: 0, z: 30}
+  playerDistanceDetection: 4
+  visionAngle: 90
+  playerAttackDistance: 0.5
 --- !u!1 &8675915458194695971
 GameObject:
   m_ObjectHideFlags: 0

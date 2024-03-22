@@ -1,5 +1,4 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -13,51 +12,59 @@ public class Enemy : MonoBehaviour
     public float playerAttackDistance;
     Transform player;
 
-    private void Start() {
-        player = GameObject.FindGameObjectWithTag("MainCamera").transform;
+    private void Start()
+    {
+        player = GameObject.FindGameObjectWithTag("Player").transform;
         RandomDestination();
         StartCoroutine(Patrol());
-        StartCoroutine(Alert());
     }
-    IEnumerator Alert()
+
+    IEnumerator Patrol()
     {
         while (true)
         {
-            if (Vector3.Distance(transform.position, player.position) < playerDistanceDetection)
+            if (!playerDetected && Vector3.Distance(transform.position, destination) < 1.5f)
             {
-                Vector3 vectorPlayer = player.position - transform.position;
-                if (Vector3.Angle(vectorPlayer.normalized, transform.forward) < visionAngle)
-                {
-                    StopCoroutine(Patrol());
-                    StartCoroutine(Attack());
-                    break;
-                }
+                RandomDestination();
             }
-            yield return new WaitForEndOfFrame();
+            yield return new WaitForSeconds(Random.Range(1, 3));
         }
     }
 
-    IEnumerator Attack()
+    private void Update()
     {
-        StopCoroutine(Alert());
+        if (!playerDetected)
+        {
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, (player.position - transform.position).normalized, out hit, playerDistanceDetection))
+            {
+                if (hit.collider.CompareTag("Player"))
+                {
+                    Vector3 vectorPlayer = player.position - transform.position;
+                    if (Vector3.Angle(vectorPlayer.normalized, transform.forward) < visionAngle)
+                    {
+                        playerDetected = true;
+                        StopAllCoroutines();
+                        StartCoroutine(ChasePlayer());
+                    }
+                }
+            }
+        }
+    }
+
+    IEnumerator ChasePlayer()
+    {
         while (true)
         {
-            if (Vector3.Distance(transform.position, player.position) > playerDistanceDetection)
-            {
-                StartCoroutine(Patrol());
-                StartCoroutine(Alert());
-                StopCoroutine(Attack());
-            }
             if (Vector3.Distance(transform.position, player.position) < playerAttackDistance)
             {
-                GetComponent<NavMeshAgent>().SetDestination(transform.position);
-                GetComponent<NavMeshAgent>().velocity = Vector3.zero;
-                // GetComponent<Animator>().SetBool("attack", true);
+                GetComponent<NavMeshAgent>().isStopped = true;
+                // Attack the player
             }
             else
             {
+                GetComponent<NavMeshAgent>().isStopped = false;
                 GetComponent<NavMeshAgent>().SetDestination(player.position);
-                // GetComponent<Animator>().SetBool("attack", false);
             }
             yield return new WaitForEndOfFrame();
         }
@@ -67,41 +74,25 @@ public class Enemy : MonoBehaviour
     {
         destination = new Vector3(Random.Range(min.x, max.x), 0, Random.Range(min.z, max.z));
         GetComponent<NavMeshAgent>().SetDestination(destination);
-        // GetComponent<Animator>().SetFloat("velocity", 2);
     }
 
-    IEnumerator Patrol()
+    private void OnTriggerEnter(Collider other)
     {
-        while (true)
-        {
-            if (Vector3.Distance(transform.position, destination) < 1.5f)
-            {
-                // GetComponent<Animator>().SetFloat("velocity", 0);
-                yield return new WaitForSeconds(Random.Range(2, 7));
-                RandomDestination();
-            }
-            yield return new WaitForEndOfFrame();
-        }
-    }
-
-
-    private void OnTriggerEnter(Collider other) {
         if (other.gameObject.CompareTag("Player"))
         {
             playerDetected = true;
-            StopCoroutine(Patrol());
-            transform.LookAt(other.transform);
-            GetComponent<NavMeshAgent>().SetDestination(other.transform.position);
-            print("Player detected");
+            StopAllCoroutines();
+            StartCoroutine(ChasePlayer());
         }
     }
 
-    private void OnTriggerExit(Collider other) {
+    private void OnTriggerExit(Collider other)
+    {
         if (other.gameObject.CompareTag("Player"))
         {
             playerDetected = false;
+            StopAllCoroutines();
             StartCoroutine(Patrol());
-            print("Player lost");
         }
     }
 }
