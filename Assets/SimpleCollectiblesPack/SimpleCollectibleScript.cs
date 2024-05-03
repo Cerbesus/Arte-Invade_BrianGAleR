@@ -50,7 +50,7 @@ public class SimpleCollectibleScript : MonoBehaviour {
 
 			//Add in code here;
 
-			Debug.Log ("Do NoType Command");
+			// Debug.Log ("Do NoType Command");
 		}
 		if (CollectibleType == CollectibleTypes.Type1) {
 

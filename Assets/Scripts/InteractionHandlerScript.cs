@@ -18,9 +18,13 @@ public class InteractionHandlerScript : MonoBehaviour,
 
     private void OnDisable()
     {
-        CoreServices.InputSystem.UnregisterHandler<IMixedRealityInputActionHandler>(this);
-        CoreServices.InputSystem.UnregisterHandler<IMixedRealityFocusHandler>(this);
+        if (CoreServices.InputSystem != null)
+        {
+            CoreServices.InputSystem.UnregisterHandler<IMixedRealityInputActionHandler>(this);
+            CoreServices.InputSystem.UnregisterHandler<IMixedRealityFocusHandler>(this);
+        }
     }
+
 
     void IMixedRealityInputActionHandler.OnActionStarted(BaseInputEventData eventData)
     {
